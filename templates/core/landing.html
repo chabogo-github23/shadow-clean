@@ -147,6 +147,7 @@
     <p>Secure, confidential research consulting and data analysis for legitimate researchers, NGOs, and organizations.</p>
     <div class="hero-buttons">
         <a href="{% url 'core:submit_project' %}" class="btn btn-primary">Submit a Project</a>
+        <a href="{% url 'core:request_magic_link' %}" class="btn btn-secondary">Login / Get Access</a>
         <a href="#features" class="btn btn-secondary">Learn More</a>
     </div>
 </section>
@@ -209,6 +210,9 @@
 <section class="cta-section">
     <h2>Ready to Get Started?</h2>
     <p>Submit your project today and receive a confidential consultation from our team.</p>
-    <a href="{% url 'core:submit_project' %}" class="btn btn-primary">Submit Your Project</a>
+    <div class="hero-buttons">
+        <a href="{% url 'core:submit_project' %}" class="btn btn-primary">Submit Your Project</a>
+        <a href="{% url 'core:request_magic_link' %}" class="btn btn-secondary">Access Existing Project</a>
+    </div>
 </section>
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Analyst Dashboard - ShadowIQ{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Analyst Dashboard</h1>
+        <p>Welcome, {{ user.alias }}</p>
+    </div>
+
+    <div class="projects-list">
+        {% if projects %}
+            <h2>Your Assigned Projects ({{ projects|length }})</h2>
+            {% for project in projects %}
+            <div class="project-card">
+                <h3>{{ project.title }}</h3>
+                <p>Status: {{ project.get_status_display }}</p>
+                <p>Client: {{ project.client.alias }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h3>No assigned projects</h3>
+                <p>You haven't been assigned any projects yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
