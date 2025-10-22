@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - {{ project.project_id }} - ShadowIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 2rem;
+    }
+
+    .payment-header {
+        margin-bottom: 2rem;
+    }
+
+    .payment-header h1 {
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .payment-header p {
+        color: var(--text-secondary);
+    }
+
+    .project-summary {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .summary-row:last-child {
+        margin-bottom: 0;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border-color);
+        font-weight: 600;
+        color: var(--accent-primary);
+    }
+
+    .summary-label {
+        color: var(--text-secondary);
+    }
+
+    .summary-value {
+        color: var(--text-primary);
+    }
+
+    .payment-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .form-group input {
+        padding: 0.75rem;
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        color: var(--text-primary);
+        font-family: inherit;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+    }
+
+    #card-element {
+        padding: 0.75rem;
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        color: var(--text-primary);
+    }
+
+    .stripe-element {
+        color: var(--text-primary);
+    }
+
+    .stripe-element--focus {
+        border-color: var(--accent-primary);
+    }
+
+    .payment-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .payment-actions .btn {
+        flex: 1;
+    }
+
+    .error-message {
+        color: var(--error);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .success-message {
+        color: var(--success);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    .loading {
+        display: none;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    .loading.active {
+        display: block;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid var(--border-color);
+        border-top-color: var(--accent-primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .info-box {
+        background-color: rgba(0, 217, 255, 0.1);
+        border: 1px solid var(--accent-primary);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    .info-box strong {
+        color: var(--accent-primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+    <div class="payment-header">
+        <h1>Complete Payment</h1>
+        <p>Secure payment for your ShadowIQ project</p>
+    </div>
+
+    <div class="info-box">
+        <strong>Escrow Protection:</strong> Your payment is held securely until the project is completed and approved. If you're not satisfied, we'll refund your payment in full.
+    </div>
+
+    <div class="project-summary">
+        <div class="summary-row">
+            <span class="summary-label">Project ID:</span>
+            <span class="summary-value">{{ project.project_id }}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Project:</span>
+            <span class="summary-value">{{ project.title|truncatewords:5 }}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Type:</span>
+            <span class="summary-value">{{ project.get_support_type_display }}</span>
+        </div>
+        {% if project.agreed_price %}
+            <div class="summary-row">
+                <span class="summary-label">Amount:</span>
+                <span class="summary-value">${{ project.agreed_price }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <form id="paymentForm" class="payment-form">
+        {% csrf_token %}
+        <input type="hidden" name="project_id" value="{{ project.project_id }}">
+
+        {% if not project.agreed_price %}
+            <div class="form-group">
+                <label for="amount">Amount (USD) *</label>
+                <input type="number" id="amount" name="amount" step="0.01" min="0.01" required placeholder="0.00">
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="card-element">Card Details *</label>
+            <div id="card-element"></div>
+            <div id="card-errors" class="error-message"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required placeholder="your@email.com">
+        </div>
+
+        <div class="payment-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Pay Now</button>
+            <a href="{% url 'core:project_detail' project.project_id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 1rem;">Processing payment...</p>
+        </div>
+    </form>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', {
+        style: {
+            base: {
+                color: '#ffffff',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#b0b0b0',
+                }
+            }
+        }
+    });
+    cardElement.mount('#card-element');
+
+    const form = document.getElementById('paymentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const loading = document.getElementById('loading');
+    const cardErrors = document.getElementById('card-errors');
+
+    cardElement.addEventListener('change', function(event) {
+        if (event.error) {
+            cardErrors.textContent = event.error.message;
+        } else {
+            cardErrors.textContent = '';
+        }
+    });
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const amount = document.getElementById('amount')?.value || '{{ project.agreed_price }}';
+        const email = document.getElementById('email').value;
+
+        if (!amount || parseFloat(amount) <= 0) {
+            cardErrors.textContent = 'Please enter a valid amount';
+            return;
+        }
+
+        submitBtn.disabled = true;
+        loading.classList.add('active');
+
+        try {
+            // Create payment intent
+            const createResponse = await fetch('{% url "core:create_payment" project.project_id %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `amount=${amount}`,
+            });
+
+            const createData = await createResponse.json();
+
+            if (!createData.success) {
+                throw new Error(createData.error || 'Failed to create payment');
+            }
+
+            // Confirm payment with Stripe
+            const { paymentIntent, error } = await stripe.confirmCardPayment(
+                createData.client_secret,
+                {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: { email: email }
+                    }
+                }
+            );
+
+            if (error) {
+                cardErrors.textContent = error.message;
+                submitBtn.disabled = false;
+                loading.classList.remove('active');
+            } else if (paymentIntent.status === 'succeeded') {
+                // Confirm payment on server
+                const confirmResponse = await fetch('{% url "core:confirm_payment" project.project_id %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `payment_intent_id=${paymentIntent.id}`,
+                });
+
+                const confirmData = await confirmResponse.json();
+
+                if (confirmData.success) {
+                    window.location.href = '{% url "core:payment_success" project.project_id %}';
+                } else {
+                    throw new Error(confirmData.error || 'Payment confirmation failed');
+                }
+            }
+        } catch (error) {
+            cardErrors.textContent = error.message;
+            submitBtn.disabled = false;
+            loading.classList.remove('active');
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block title %}Project Triage - {{ project.project_id }} - ShadowIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .triage-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .triage-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .triage-sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section {
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+    }
+
+    .section h2 {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .section h3 {
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+
+    .project-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .project-id {
+        color: var(--accent-primary);
+        font-size: 0.875rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-submitted {
+        background-color: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+
+    .status-accepted {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+    }
+
+    .status-in_progress {
+        background-color: rgba(139, 92, 246, 0.2);
+        color: #8b5cf6;
+    }
+
+    .status-qa {
+        background-color: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+
+    .status-completed {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .status-disputed {
+        background-color: rgba(168, 85, 247, 0.2);
+        color: #a855f7;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .meta-item {
+        font-size: 0.875rem;
+    }
+
+    .meta-label {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .meta-value {
+        color: var(--text-primary);
+    }
+
+    .description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .action-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .action-form .form-group {
+        margin-bottom: 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .messages-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .message {
+        background-color: var(--bg-tertiary);
+        border-left: 3px solid var(--accent-primary);
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .message-sender {
+        font-weight: 600;
+        color: var(--accent-primary);
+        font-size: 0.875rem;
+    }
+
+    .message-time {
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+    }
+
+    .message-content {
+        color: var(--text-primary);
+        margin-top: 0.5rem;
+    }
+
+    .files-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .file-item {
+        background-color: var(--bg-tertiary);
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.875rem;
+    }
+
+    .file-name {
+        color: var(--accent-primary);
+        text-decoration: none;
+    }
+
+    .file-size {
+        color: var(--text-secondary);
+    }
+
+    @media (max-width: 1024px) {
+        .triage-container {
+            grid-template-columns: 1fr;
+        }
+
+        .meta-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="triage-container">
+    <div class="triage-main">
+        <!-- Project Details -->
+        <div class="section">
+            <div class="project-header">
+                <div>
+                    <div class="project-id">{{ project.project_id }}</div>
+                    <div class="project-title">{{ project.title }}</div>
+                </div>
+                <span class="status-badge status-{{ project.status }}">{{ project.get_status_display }}</span>
+            </div>
+
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <span class="meta-label">Client:</span>
+                    <span class="meta-value">{{ project.client.alias }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Type:</span>
+                    <span class="meta-value">{{ project.get_support_type_display }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Research Area:</span>
+                    <span class="meta-value">{{ project.research_area }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Submitted:</span>
+                    <span class="meta-value">{{ project.created_at|date:"M d, Y H:i" }}</span>
+                </div>
+                {% if project.deadline %}
+                    <div class="meta-item">
+                        <span class="meta-label">Deadline:</span>
+                        <span class="meta-value">{{ project.deadline|date:"M d, Y" }}</span>
+                    </div>
+                {% endif %}
+                {% if project.agreed_price %}
+                    <div class="meta-item">
+                        <span class="meta-label">Price:</span>
+                        <span class="meta-value">${{ project.agreed_price }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <h3>Description</h3>
+            <div class="description">{{ project.description }}</div>
+
+            {% if project.preferred_methods %}
+                <h3>Preferred Methods</h3>
+                <div class="description">{{ project.preferred_methods }}</div>
+            {% endif %}
+
+            <h3>Compliance</h3>
+            <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                <div>✓ Confirms lawful use: {% if project.confirms_lawful_use %}Yes{% else %}No{% endif %}</div>
+                <div>✓ Confirms data rights: {% if project.confirms_data_rights %}Yes{% else %}No{% endif %}</div>
+                <div>✓ IRB approval: {% if project.irb_approval_provided %}Yes{% else %}No{% endif %}</div>
+            </div>
+        </div>
+
+        <!-- Files -->
+        {% if files %}
+            <div class="section">
+                <h2>Uploaded Files</h2>
+                <div class="files-list">
+                    {% for file in files %}
+                        <div class="file-item">
+                            <span class="file-name">{{ file.filename }}</span>
+                            <span class="file-size">{{ file.file_size|filesizeformat }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Messages -->
+        <div class="section">
+            <h2>Communication</h2>
+            {% if messages %}
+                <div class="messages-list">
+                    {% for message in messages %}
+                        <div class="message">
+                            <div class="message-sender">{{ message.sender.alias }}</div>
+                            <div class="message-time">{{ message.created_at|date:"M d, Y H:i" }}</div>
+                            <div class="message-content">{{ message.content }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--text-secondary);">No messages yet</p>
+            {% endif %}
+
+            <form method="post" action="{% url 'core:send_message' project.project_id %}" style="margin-top: 1rem;">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea name="content" placeholder="Send a message to the client..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="triage-sidebar">
+        <!-- Status Management -->
+        <div class="section">
+            <h2>Manage Project</h2>
+            <form method="post" class="action-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="status">Update Status</label>
+                    <select name="status" id="status">
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if project.status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="action" value="update_status">
+                <button type="submit" class="btn btn-primary">Update Status</button>
+            </form>
+        </div>
+
+        <!-- Assign Analyst -->
+        <div class="section">
+            <h2>Assign Analyst</h2>
+            <form method="post" class="action-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="analyst_id">Select Analyst</label>
+                    <select name="analyst_id" id="analyst_id">
+                        <option value="">-- Select --</option>
+                        {% for analyst in analysts %}
+                            <option value="{{ analyst.id }}" {% if project.assigned_analyst.id == analyst.id %}selected{% endif %}>{{ analyst.alias }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <input type="hidden" name="action" value="assign">
+                <button type="submit" class="btn btn-primary">Assign</button>
+            </form>
+        </div>
+
+        <!-- Set Price -->
+        <div class="section">
+            <h2>Set Price</h2>
+            <form method="post" class="action-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="agreed_price">Price ($)</label>
+                    <input type="number" name="agreed_price" id="agreed_price" step="0.01" value="{{ project.agreed_price|default:'' }}" placeholder="0.00">
+                </div>
+                <input type="hidden" name="action" value="set_price">
+                <button type="submit" class="btn btn-primary">Set Price</button>
+            </form>
+        </div>
+
+        <!-- Quick Actions -->
+        {% if project.status == 'submitted' %}
+            <div class="section">
+                <h2>Quick Actions</h2>
+                <form method="post" class="action-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn btn-primary">Accept Project</button>
+                </form>
+                <form method="post" class="action-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="btn btn-secondary">Reject Project</button>
+                </form>
+            </div>
+        {% endif %}
+
+        <!-- Audit Log -->
+        <div class="section">
+            <h2>Activity Log</h2>
+            <div style="font-size: 0.875rem; max-height: 300px; overflow-y: auto;">
+                {% for log in audit_logs %}
+                    <div style="padding: 0.5rem 0; border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                        <strong>{{ log.get_action_display }}</strong>
+                        <div style="font-size: 0.75rem;">{{ log.created_at|date:"M d, Y H:i" }}</div>
+                    </div>
+                {% empty %}
+                    <p style="color: var(--text-secondary);">No activity yet</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

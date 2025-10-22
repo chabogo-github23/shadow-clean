@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Cancelled - ShadowIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cancel-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .cancel-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--warning);
+    }
+
+    .cancel-container h1 {
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .cancel-container p {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 150px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cancel-container">
+    <div class="cancel-icon">✕</div>
+    <h1>Payment Cancelled</h1>
+    <p>Your payment was not completed. Your project is still in draft status.</p>
+
+    <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 2rem 0;">
+        You can try again whenever you're ready. Your project details have been saved.
+    </p>
+
+    <div class="action-buttons">
+        <a href="{% url 'core:payment_page' project.project_id %}" class="btn btn-primary">Try Again</a>
+        <a href="{% url 'core:project_detail' project.project_id %}" class="btn btn-secondary">Back to Project</a>
+    </div>
+</div>
+{% endblock %}

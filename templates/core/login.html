@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ShadowIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        max-width: 500px;
+        margin: 4rem auto;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 2rem;
+    }
+
+    .login-container h1 {
+        margin-bottom: 0.5rem;
+        color: var(--accent-primary);
+        text-align: center;
+    }
+
+    .login-container > p {
+        color: var(--text-secondary);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .form-actions .btn {
+        flex: 1;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 2rem 0;
+        color: var(--text-secondary);
+    }
+
+    .divider::before,
+    .divider::after {
+        content: "";
+        display: inline-block;
+        width: 45%;
+        height: 1px;
+        background-color: var(--border-color);
+        vertical-align: middle;
+    }
+
+    .divider::before {
+        margin-right: 1rem;
+    }
+
+    .divider::after {
+        margin-left: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>Access Your Account</h1>
+    <p>Enter your pseudonym to get started</p>
+
+    {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="alias">Pseudonym / Alias *</label>
+            <input type="text" id="alias" name="alias" required placeholder="Your unique identifier">
+            <p class="help-text">The alias you used when submitting your project.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email (Optional)</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com">
+            <p class="help-text">If provided, we'll send you a magic link for secure access.</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Continue</button>
+        </div>
+    </form>
+
+    <div class="divider">or</div>
+
+    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1rem;">
+        New to ShadowIQ?
+    </p>
+    <a href="{% url 'core:submit_project' %}" class="btn btn-secondary" style="width: 100%; text-align: center;">Submit Your First Project</a>
+</div>
+{% endblock %}

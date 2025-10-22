@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful - ShadowIQ{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .success-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        color: var(--success);
+    }
+
+    .success-container h1 {
+        color: var(--accent-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .success-container p {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+
+    .success-details {
+        background-color: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .detail-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .detail-label {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .detail-value {
+        color: var(--text-primary);
+    }
+
+    .next-steps {
+        background-color: rgba(0, 217, 255, 0.1);
+        border: 1px solid var(--accent-primary);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+
+    .next-steps h3 {
+        color: var(--accent-primary);
+        margin-bottom: 1rem;
+    }
+
+    .next-steps ol {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.8;
+        margin-left: 1.5rem;
+    }
+
+    .next-steps li {
+        margin-bottom: 0.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        flex: 1;
+        min-width: 150px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">✓</div>
+    <h1>Payment Successful!</h1>
+    <p>Your payment has been received and your project is now active.</p>
+
+    <div class="success-details">
+        <div class="detail-row">
+            <span class="detail-label">Project ID:</span>
+            <span class="detail-value">{{ project.project_id }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Project:</span>
+            <span class="detail-value">{{ project.title }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Status:</span>
+            <span class="detail-value">{{ project.get_status_display }}</span>
+        </div>
+        {% if project.agreed_price %}
+            <div class="detail-row">
+                <span class="detail-label">Amount Paid:</span>
+                <span class="detail-value">${{ project.agreed_price }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="next-steps">
+        <h3>What Happens Next?</h3>
+        <ol>
+            <li><strong>Project Review:</strong> Our team will review your project details and assign an analyst.</li>
+            <li><strong>Analyst Assignment:</strong> You'll receive a message when your analyst is assigned.</li>
+            <li><strong>Analysis:</strong> Your analyst will begin work on your project.</li>
+            <li><strong>QA Review:</strong> All deliverables undergo reproducibility and quality checks.</li>
+            <li><strong>Delivery:</strong> You'll receive your complete deliverable package for download.</li>
+        </ol>
+    </div>
+
+    <p style="color: var(--text-secondary); font-size: 0.875rem;">
+        You can track your project progress in your dashboard. We'll notify you of any updates via the project messages.
+    </p>
+
+    <div class="action-buttons">
+        <a href="{% url 'core:project_detail' project.project_id %}" class="btn btn-primary">View Project</a>
+        <a href="{% url 'core:dashboard' %}" class="btn btn-secondary">Go to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
