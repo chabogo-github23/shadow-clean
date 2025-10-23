@@ -2215,3 +2215,184 @@ Traceback (most recent call last):
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 AttributeError: 'NoneType' object has no attribute 'is_authenticated'
 >>>>>>> 172d2643f3f0ed09ed85e79112b0bfcfc497ae0d
+INFO 2025-10-22 22:39:49,588 autoreload 8468 8484 Watching for file changes with StatReloader
+INFO 2025-10-22 23:48:26,503 autoreload 404 12932 Watching for file changes with StatReloader
+INFO 2025-10-22 23:59:03,600 autoreload 404 12932 C:\Users\PC\Desktop\shadow\core\migrations\0001_initial.py changed, reloading.
+INFO 2025-10-22 23:59:14,904 autoreload 2536 6760 Watching for file changes with StatReloader
+INFO 2025-10-23 00:02:34,646 autoreload 12404 5624 Watching for file changes with StatReloader
+INFO 2025-10-23 00:27:47,094 autoreload 12404 5624 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 00:28:04,656 autoreload 1672 9108 Watching for file changes with StatReloader
+ERROR 2025-10-23 00:34:51,309 log 1672 11684 Internal Server Error: /project/submit/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\PC\desktop\shadow\core\decorators.py", line 86, in wrapper
+    if not request.user.is_authenticated:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'is_authenticated'
+INFO 2025-10-23 00:58:31,164 autoreload 1672 9108 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 00:58:58,199 autoreload 2852 3164 Watching for file changes with StatReloader
+INFO 2025-10-23 01:35:45,056 autoreload 2852 3164 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 01:37:21,123 autoreload 7836 9088 Watching for file changes with StatReloader
+ERROR 2025-10-23 01:40:14,488 log 7836 12372 Internal Server Error: /dashboard/client/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\PC\desktop\shadow\core\decorators.py", line 86, in wrapper
+    if not request.user.is_authenticated:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'is_authenticated'
+INFO 2025-10-23 01:49:23,178 autoreload 7836 9088 C:\Users\PC\Desktop\shadow\shadowiq\settings.py changed, reloading.
+INFO 2025-10-23 01:50:00,020 autoreload 8400 5716 Watching for file changes with StatReloader
+INFO 2025-10-23 01:51:01,438 autoreload 8400 5716 C:\Users\PC\Desktop\shadow\shadowiq\settings.py changed, reloading.
+INFO 2025-10-23 01:51:09,707 autoreload 11988 4252 Watching for file changes with StatReloader
+INFO 2025-10-23 02:00:32,495 autoreload 11988 4252 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 02:00:48,519 autoreload 6480 9608 Watching for file changes with StatReloader
+INFO 2025-10-23 02:04:30,306 autoreload 6480 9608 C:\Users\PC\Desktop\shadow\core\decorators.py changed, reloading.
+INFO 2025-10-23 02:04:41,833 autoreload 5264 11988 Watching for file changes with StatReloader
+INFO 2025-10-23 02:05:51,615 autoreload 5264 11988 C:\Users\PC\Desktop\shadow\core\middleware.py changed, reloading.
+INFO 2025-10-23 02:05:54,619 autoreload 13748 8960 Watching for file changes with StatReloader
+ERROR 2025-10-23 02:07:38,489 log 13748 7236 Internal Server Error: /auth/verify-magic-link/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\utils\deprecation.py", line 122, in __call__
+    response = self.process_response(request, response)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\contrib\sessions\middleware.py", line 59, in process_response
+    request.session.save()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 123, in save
+    obj = self.create_model_instance(data)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\contrib\sessions\backends\db.py", line 102, in create_model_instance
+    session_data=self.encode(data),
+                 ~~~~~~~~~~~^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\contrib\sessions\backends\base.py", line 124, in encode
+    return signing.dumps(
+           ~~~~~~~~~~~~~^
+        session_dict,
+        ^^^^^^^^^^^^^
+    ...<2 lines>...
+        compress=True,
+        ^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\signing.py", line 150, in dumps
+    return TimestampSigner(key=key, salt=salt).sign_object(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        obj, serializer=serializer, compress=compress
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\signing.py", line 225, in sign_object
+    data = serializer().dumps(obj)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\signing.py", line 125, in dumps
+    return json.dumps(obj, separators=(",", ":")).encode("latin-1")
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\json\__init__.py", line 238, in dumps
+    **kw).encode(obj)
+          ~~~~~~^^^^^
+  File "C:\Python313\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "C:\Python313\Lib\json\encoder.py", line 261, in iterencode
+    return _iterencode(o, 0)
+  File "C:\Python313\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+                    f'is not JSON serializable')
+TypeError: Object of type UUID is not JSON serializable
+INFO 2025-10-23 02:11:05,416 autoreload 13748 8960 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 02:11:20,670 autoreload 3076 6736 Watching for file changes with StatReloader
+ERROR 2025-10-23 02:13:45,070 log 3076 10596 Internal Server Error: /dashboard/client/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\core\middleware.py", line 20, in __call__
+    user.save(update_fields=['last_seen'])
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\db\models\base.py", line 880, in save
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: The following fields do not exist in this model, are m2m fields, primary keys, or are non-concrete fields: last_seen
+INFO 2025-10-23 02:37:12,413 autoreload 3124 6916 Watching for file changes with StatReloader
+WARNING 2025-10-23 02:37:34,818 log 3124 3756 Not Found: /favicon.ico
+WARNING 2025-10-23 02:37:35,008 log 3124 3756 Not Found: /favicon.ico
+ERROR 2025-10-23 02:39:01,021 log 3124 6724 Internal Server Error: /project/submit/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\PC\desktop\shadow\core\decorators.py", line 116, in wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\PC\desktop\shadow\core\views.py", line 225, in submit_project
+    return render(request, 'projects/submit.html')
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: projects/submit.html
+INFO 2025-10-23 02:42:14,000 autoreload 3124 6916 C:\Users\PC\Desktop\shadow\core\views.py changed, reloading.
+INFO 2025-10-23 02:42:22,951 autoreload 4508 8448 Watching for file changes with StatReloader
+ERROR 2025-10-23 02:42:50,843 log 4508 8712 Internal Server Error: /project/submit/
+Traceback (most recent call last):
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\PC\desktop\shadow\core\decorators.py", line 116, in wrapper
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\PC\desktop\shadow\core\views.py", line 225, in submit_project
+    return render(request, 'core/submit_project.html')
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\backends\django.py", line 107, in render
+    return self.template.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 171, in render
+    return self._render(context)
+           ~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\loader_tags.py", line 159, in render
+    return compiled_parent._render(context)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\loader_tags.py", line 65, in render
+    result = block.nodelist.render(context)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\base.py", line 977, in render_annotated
+    return self.render(context)
+           ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\template\defaulttags.py", line 480, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\urls\base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+  File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'landing' not found. 'landing' is not a valid view function or pattern name.

@@ -1,25 +1,29 @@
-from .models import PseudonymousUser
 from django.utils import timezone
+from django.contrib.auth.models import AnonymousUser
+from .models import PseudonymousUser
 
 class PseudonymousAuthMiddleware:
-    """Attach pseudonymous user from session to request."""
+    """Middleware to attach pseudonymous user from session to the request."""
 
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
+        user = None
         user_id = request.session.get('pseudonymous_user_id')
 
         if user_id:
             try:
                 user = PseudonymousUser.objects.get(id=user_id)
-                request.user = user
+                # Update last seen timestamp
                 user.last_seen = timezone.now()
                 user.save(update_fields=['last_seen'])
             except PseudonymousUser.DoesNotExist:
-                request.user = None
-        else:
-            request.user = None
+                # Session refers to invalid user — clear it
+                request.session.pop('pseudonymous_user_id', None)
+
+        # Always assign a valid user-like object to request.user
+        request.user = user if user else AnonymousUser()
 
         response = self.get_response(request)
         return response

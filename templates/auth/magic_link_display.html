@@ -1,3 +1,4 @@
+<!-- templates/auth/magic_link_display.html -->
 {% extends "base.html" %}
 
 {% block title %}Your Magic Link - ShadowIQ{% endblock %}
@@ -187,10 +188,18 @@
         
         <p>Copy and visit this link to access your account. This link is unique to you and provides secure, passwordless access to the platform.</p>
         
+        <!-- This should now work since we're passing 'magic_link' from the view -->
+        {% if magic_link %}
         <div class="magic-link-display">
             <div class="copy-success" id="copySuccess">Copied!</div>
             <a href="{{ magic_link }}" id="magicLink" target="_blank">{{ magic_link }}</a>
         </div>
+        {% else %}
+        <div class="error-message">
+            <p><strong>Error:</strong> Magic link not generated. Please try again.</p>
+            <p>Debug: magic_link variable is empty</p>
+        </div>
+        {% endif %}
 
         <div class="security-note">
             <h3>🛡️ Security Notice</h3>
@@ -203,9 +212,11 @@
         </div>
 
         <div class="action-buttons">
+            {% if magic_link %}
             <button class="btn-copy" onclick="copyMagicLink()">
                 Copy Link to Clipboard
             </button>
+            {% endif %}
             <a href="{% url 'core:home' %}" class="btn-back">
                 ← Back to Home
             </a>
@@ -220,17 +231,11 @@
         const magicLink = document.getElementById('magicLink').href;
         const copySuccess = document.getElementById('copySuccess');
         
-        // Use the modern Clipboard API
         navigator.clipboard.writeText(magicLink).then(() => {
-            // Show success message
             copySuccess.classList.add('show');
-            
-            // Hide success message after 2 seconds
             setTimeout(() => {
                 copySuccess.classList.remove('show');
             }, 2000);
-            
-            // Fallback for older browsers
         }).catch(err => {
             // Fallback for older browsers
             const textArea = document.createElement('textarea');
@@ -239,20 +244,11 @@
             textArea.select();
             document.execCommand('copy');
             document.body.removeChild(textArea);
-            
-            // Show success message for fallback
             copySuccess.classList.add('show');
             setTimeout(() => {
                 copySuccess.classList.remove('show');
             }, 2000);
         });
     }
-
-    // Auto-select the link when clicking on the display area
-    document.querySelector('.magic-link-display').addEventListener('click', function(e) {
-        if (e.target.tagName !== 'A') {
-            this.querySelector('a').focus();
-        }
-    });
 </script>
 {% endblock %}

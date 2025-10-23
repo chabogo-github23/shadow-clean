@@ -9,6 +9,7 @@ from django.utils.crypto import get_random_string
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.contrib.auth import login, logout
 import secrets
 import uuid
 from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
@@ -91,15 +92,15 @@ def request_magic_link(request):
             defaults={'email': email or None}
         )
 
-        # Create a short-lived magic token
-        token = get_random_string(48)
+        # Generate magic token
+        token = secrets.token_urlsafe(32)
         user.magic_token = token
-        user.magic_token_expires = timezone.now() + timedelta(minutes=15)
+        user.magic_token_expires = timezone.now() + timezone.timedelta(hours=24)
         user.save()
 
         # Build verification link
-        link = request.build_absolute_uri(
-            reverse('core:verify_magic_link') + f'?token={token}'
+        magic_link = request.build_absolute_uri(
+            f'/auth/verify-magic-link/?token={token}'
         )
 
         # Log request
@@ -112,36 +113,45 @@ def request_magic_link(request):
 
         # ✅ Show the link directly on-screen (no email)
         return render(request, 'auth/magic_link_display.html', {
-            'link': link,
+            'magic_link': magic_link,
             'user': user,
         })
     return render(request, 'auth/request_magic_link.html')
 
 
 def verify_magic_link(request):
-    """Verify a signed magic link and create pseudonymous session."""
+    """Verify magic token and log user in"""
     token = request.GET.get('token')
+    
     if not token:
-        return render(request, 'core/invalid_token.html', {'error': 'No token provided'})
-
-    signer = TimestampSigner()
+        return render(request, 'core/invalid_token.html', {  # This one is in core/
+            'error': 'No token provided'
+        })
+    
     try:
-        # Verify and extract user ID
-        unsigned = signer.unsign(token, max_age=900)  # 15 min
-        user = PseudonymousUser.objects.get(id=unsigned)
-
-        # Save session
+        # Find user with valid, non-expired token
+        user = PseudonymousUser.objects.get(
+            magic_token=token,
+            magic_token_expires__gt=timezone.now()
+        )
+        
+        # ✅ Instead of Django's login()
         request.session['pseudonymous_user_id'] = str(user.id)
+        
+        # Update user record
         user.last_login = timezone.now()
+        user.magic_token = None  # Invalidate token after use
+        user.magic_token_expires = None
         user.save()
-
+        
+        # Log successful login
         AuditLog.objects.create(
             user=user,
             action='user_logged_in',
             ip_address=get_client_ip(request),
             user_agent=request.META.get('HTTP_USER_AGENT')
         )
-
+        
         # Redirect to appropriate dashboard
         if user.is_admin:
             return redirect('core:admin_dashboard')
@@ -149,13 +159,15 @@ def verify_magic_link(request):
             return redirect('core:analyst_dashboard')
         else:
             return redirect('core:client_dashboard')
-
-    except SignatureExpired:
-        return render(request, 'core/invalid_token.html', {'error': 'Token expired'})
-    except (BadSignature, PseudonymousUser.DoesNotExist):
-        return render(request, 'core/invalid_token.html', {'error': 'Invalid token'})
+            
+    except PseudonymousUser.DoesNotExist:
+        return render(request, 'core/invalid_token.html', {  # This one is in core/
+            'error': 'Invalid or expired token'
+        })
     except Exception as e:
-        return render(request, 'core/invalid_token.html', {'error': str(e)})
+        return render(request, 'core/invalid_token.html', {  # This one is in core/
+            'error': f'Authentication error: {str(e)}'
+        })
 
 
 def logout_view(request):
@@ -210,7 +222,7 @@ def submit_project(request):
         )
         return redirect('core:project_detail', project_id=project.project_id)
 
-    return render(request, 'projects/submit.html')
+    return render(request, 'core/submit_project.html')
 
 
 # ----------------------------

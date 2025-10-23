@@ -162,3 +162,6 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+PROJECT_ID_PREFIX = "SIQ"
+
