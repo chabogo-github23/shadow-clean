@@ -7,9 +7,14 @@ import string
 
 def generate_project_id():
     """Generate unique project ID in format SIQ-XXXXXX"""
-    from django.conf import settings
+    try:
+        from django.conf import settings
+        prefix = getattr(settings, 'PROJECT_ID_PREFIX', 'SIQ')
+    except:
+        prefix = 'SIQ'
+    
     random_part = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
-    return f"{settings.PROJECT_ID_PREFIX}-{random_part}"
+    return f"{prefix}-{random_part}"
 
 class PseudonymousUser(models.Model):
     """User with pseudonymous authentication (no traditional login)"""
@@ -28,6 +33,19 @@ class PseudonymousUser(models.Model):
     
     def __str__(self):
         return self.alias
+class AuthToken(models.Model):
+    user = models.ForeignKey('PseudonymousUser', on_delete=models.CASCADE)
+    token = models.CharField(max_length=128, unique=True, default=uuid.uuid4)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+
+    def is_valid(self):
+        """Check if token is still valid"""
+        return not self.used and timezone.now() < self.expires_at
+
+    def __str__(self):
+        return f"AuthToken for {self.user} (expires {self.expires_at})"
 
 class Project(models.Model):
     """Research project submission"""
@@ -214,3 +232,6 @@ class DownloadToken(models.Model):
     
     def __str__(self):
         return f"Token for {self.deliverable.filename}"
+
+# settings.py
+PROJECT_ID_PREFIX = "SIQ"

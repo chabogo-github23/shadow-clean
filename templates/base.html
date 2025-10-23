@@ -249,7 +249,7 @@
                     {% endif %}
                     <a href="{% url 'core:logout' %}" class="btn btn-secondary">Logout</a>
                 {% else %}
-                    <a href="{% url 'core:login' %}" class="btn btn-primary">Login</a>
+                    <a href="{% url 'core:request_magic_link' %}">Login</a>
                 {% endif %}
             </nav>
         </div>

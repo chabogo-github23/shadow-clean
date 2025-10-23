@@ -1,16 +1,25 @@
-from django.utils.deprecation import MiddlewareMixin
 from .models import PseudonymousUser
+from django.utils import timezone
 
-class PseudonymousAuthMiddleware(MiddlewareMixin):
-    """Middleware to attach current user to request"""
-    
-    def process_request(self, request):
-        user_id = request.session.get('user_id')
+class PseudonymousAuthMiddleware:
+    """Attach pseudonymous user from session to request."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        user_id = request.session.get('pseudonymous_user_id')
+
         if user_id:
             try:
-                request.user_obj = PseudonymousUser.objects.get(id=user_id)
+                user = PseudonymousUser.objects.get(id=user_id)
+                request.user = user
+                user.last_seen = timezone.now()
+                user.save(update_fields=['last_seen'])
             except PseudonymousUser.DoesNotExist:
-                request.user_obj = None
+                request.user = None
         else:
-            request.user_obj = None
-        return None
+            request.user = None
+
+        response = self.get_response(request)
+        return response
