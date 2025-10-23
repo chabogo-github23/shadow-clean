@@ -2396,3 +2396,5 @@ Traceback (most recent call last):
   File "C:\Users\PC\desktop\shadow\venv\Lib\site-packages\django\urls\resolvers.py", line 831, in _reverse_with_prefix
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'landing' not found. 'landing' is not a valid view function or pattern name.
+WARNING 2025-10-23 03:01:45,688 log 4508 8784 Not Found: /project/SIQ-RFM2YH/messages/
+WARNING 2025-10-23 03:02:23,299 log 4508 1784 Not Found: /project/SIQ-RFM2YH/chat/
